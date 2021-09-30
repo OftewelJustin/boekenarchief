@@ -89,9 +89,10 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><strong><?php echo $_SESSION['username']?></strong></span>
-                                <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><strong>
+                                        <?php echo $_SESSION['username']?>
+                                    </strong></span>
+                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -140,11 +141,12 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                                Total Users</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><strong>NEW
+                                                    FUNCTION</strong></div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            <i class="fas fa-users fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -220,17 +222,71 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
                     <!-- Content Row -->
 
                     <div class="row">
+                        <!-- DataTales Example -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-5">
+                                <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Author</th>
+                                                <th>ISBN-13</th>
+                                                <th>Format</th>
+                                                <th>Publisher</th>
+                                                <th>Pages</th>
+                                                <th>Dimensions</th>
+                                                <th>Overiew</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                        $conn = mysqli_connect("localhost", "root", "", "boekenarchief"); //Connect to database
+                                        $query = "SELECT * FROM `books`";
+                                        $result = mysqli_query($conn, $query) or die('Cannot fetch data from database. ' . mysqli_error($conn));
+                                        while ($row = mysqli_fetch_assoc($result)) {?>
+
+                                        <tr>
+                                            <td><?php echo $row['title']; ?></td>
+                                            <td><?php echo $row['author']; ?></td>
+                                            <td><?php echo $row['isbn13']; ?></td>
+                                            <td><?php echo $row['format']; ?></td>
+                                            <td><?php echo $row['publisher']; ?></td>
+                                            <td><?php echo $row['pages']; ?></td>
+                                            <td><?php echo $row['dimensions']; ?></td>
+                                            <td><?php echo $row['overview']; ?></td>
+                                            <td><?php echo $row['borrow']; ?></td>
+                                            <td><a href="?del='.$row['EventNumber'].'" class="btn btn-sm btn-danger">Delete</a></td>
+                                            <td><a href="update.php?upd='.$row['EventNumber'].'" class="btn btn-sm btn-warning">Update</a></td>
+
+                                        </tr>
+
+                                <?php
+                                }
+                                mysqli_free_result($result);
+                                mysqli_close($conn);
+                                ?>
+
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- /.container-fluid -->
-
             </div>
-            <!-- End of Main Content -->
-            <?php
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+        <?php
                 require ('./core/Assets/Footer.php');
             ?>
-        </div>
-        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
@@ -260,6 +316,7 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
         </div>
     </div>
 
+
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -271,11 +328,11 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="js/demo/datatables-demo.js"></script>
 
 </body>
 
