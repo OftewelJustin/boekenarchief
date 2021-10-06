@@ -9,6 +9,19 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
     exit;
 }
 
+$conn = mysqli_connect("localhost", "root", "", "boekenarchief"); //Connect to database
+
+
+if( isset($_GET['del']) ) {
+    $idbook = $_GET['del'];
+    $query = "DELETE FROM `spend` WHERE idbook=$idbook";
+    $result = mysqli_query($conn, $query) or die('Cannot delete data from database. '.mysqli_error($conn));
+    if($result) {
+        mysqli_close($conn);
+        header('Location:profile.php');
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -132,94 +145,6 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
                 </div>
 
                 <!-- Content Row -->
-                <div class="row">
-
-                    <!-- Earnings (Monthly) Card Example -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-primary shadow h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            Total Users</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800"><strong>NEW
-                                            FUNCTION</strong></div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-users fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Earnings (Monthly) Card Example -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-success shadow h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            Earnings (Annual)</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Earnings (Monthly) Card Example -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-info shadow h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
-                                        </div>
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col-auto">
-                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                            </div>
-                                            <div class="col">
-                                                <div class="progress progress-sm mr-2">
-                                                    <div class="progress-bar bg-info" role="progressbar"
-                                                         style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                         aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pending Requests Card Example -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-warning shadow h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            Pending Requests</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Content Row -->
 
                 <div class="row">
                     <!-- DataTales Example -->
@@ -232,7 +157,10 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                     <tr>
-                                        <th>Book ID:</th>
+                                        <th>Book Title:</th>
+                                        <th>Claimed On:</th>
+                                        <th>Gone On:</th>
+                                        <th>Actions:</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -246,9 +174,10 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
                                     while ($row = mysqli_fetch_assoc($result)) {?>
 
                                         <tr>
-                                            <td><?php echo $row['idbook']; ?></td>
-
-
+                                            <td><?php echo $row['title']; ?></td>
+                                            <td><?php echo $row['date']; ?></td>
+                                            <td><?php echo $row['fourweeks']; ?></td>
+                                            <td><a  href="?del=<?php echo $row['idbook'] ?> " class="btn btn-danger" >Unclaim</a></td>
                                         </tr>
 
                                         <?php

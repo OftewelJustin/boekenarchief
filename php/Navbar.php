@@ -12,7 +12,7 @@
                     <a class="nav-link" href="./index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../cms/index.php">Profile</a>
+                    <a class="nav-link" href="cms/profile.php">Profile</a>
                 </li>
             </ul>
         </div>

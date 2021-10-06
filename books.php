@@ -5,7 +5,7 @@ if (isset($_POST['event_uploader'])){
 
     $conn = mysqli_connect("localhost", "root", "", "boekenarchief"); //Connect to database
 
-
+    $booktitle = $_POST['booktitle'];
     $userid = $_POST['userid'];
     $bookid = $_POST['bookid'];
     $dt1 = new DateTime();
@@ -15,11 +15,10 @@ if (isset($_POST['event_uploader'])){
     $date = $dt2->format("Y-m-d");
 
 
-    $sql = "INSERT INTO spend (iduser, idbook, date, fourweeks) VALUES ('$userid', '$bookid', '$today', '$date')";
+    $sql = "INSERT INTO spend (iduser, idbook, date, fourweeks, title) VALUES ('$userid', '$bookid', '$today', '$date', '$booktitle') ";
+    //$query  = "UPDATE `books` SET borrow='0' WHERE id='$bookid'";
     $query = mysqli_query($conn, $sql);
     echo mysqli_error($conn);
-
-
 
 
 }
@@ -70,7 +69,7 @@ if (isset($_POST['event_uploader'])){
                     while($row = mysqli_fetch_assoc($result)) {?>
                         <div class="col-md-9">
                             <div class="small mb-1">BOOK ID: <?php echo $row['id'] ?></div>
-                            <h1 class="display-5 fw-bolder">S<?php echo $row['title'] ?></h1>
+                            <h1 class="display-5 fw-bolder"><?php echo $row['title'] ?></h1>
                             <div class="fs-5 mb-5">
                                 <span class="text-decoration-line-through">
                                     <?php
@@ -96,6 +95,7 @@ if (isset($_POST['event_uploader'])){
                                                 <form action="books.php" method="POST">
                                                     <input type="hidden" name="userid" name="$userid" value="<?php echo $_SESSION['id']?>">
                                                     <input type="hidden" name="bookid" name="bookid" value="<?php echo $_GET['id']?>">
+                                                    <input type="hidden" name="booktitle" name="booktitle" value="<?php echo $row['title'] ?>">
                                                     <input  class="btn bg-success text-white flex-shrink-0" type="submit" name="event_uploader" value="Claim">
                                                 </form>
                                             </div>
