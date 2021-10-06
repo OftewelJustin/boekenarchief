@@ -1,3 +1,31 @@
+
+<?php
+
+if (isset($_POST['event_uploader'])){
+
+    $conn = mysqli_connect("localhost", "root", "", "boekenarchief"); //Connect to database
+
+
+    $userid = $_POST['userid'];
+    $bookid = $_POST['bookid'];
+    $dt1 = new DateTime();
+    $today = $dt1->format("Y-m-d");
+
+    $dt2 = new DateTime("+1 month");
+    $date = $dt2->format("Y-m-d");
+
+
+    $sql = "INSERT INTO spend (iduser, idbook, date, fourweeks) VALUES ('$userid', '$bookid', '$today', '$date')";
+    $query = mysqli_query($conn, $sql);
+    echo mysqli_error($conn);
+
+
+
+
+}
+
+
+?>
 <!doctype html>
 <html lang="en">
 
@@ -15,73 +43,86 @@
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">Start Bootstrap</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php
+    require ('./php/Navbar.php');
 
-    <!-- Full Page Image Header with Vertically Centered Content -->
-    <header class="masthead">
-        <div class="container h-100">
-            <div class="row h-100 align-items-center">
-                <div class="col-12 text-center">
-                    <h1 class="fw-light">Vertically Centered Masthead Content</h1>
-                    <p class="lead">A great starter layout for a landing page</p>
-                </div>
-            </div>
-        </div>
-    </header>
+    ?>
+
 
     <!-- Page Content -->
     <section class="py-5">
-        <div class="container">
-            <h2 class="fw-light">Page Content</h2>
-            <div class="row">
-                    <?php
-                        $conn = mysqli_connect("localhost", "root", "", "boekenarchief"); //Connect to database
-                        $query = "SELECT * FROM `books` WHERE `borrow` = 1 LIMIT 6";
-                        $result = mysqli_query($conn, $query) or die('Cannot fetch data from database. ' . mysqli_error($conn));
-                        while ($row = mysqli_fetch_assoc($result)) {?>
-                        <div class="col">
-                            <div class="card mt-5" style="width: 21em; height: 15em;">
-                                <div class="card-body">
-                                    <h5 class="card-title"><?php echo $row['title']; ?></h5>
-                                    <h6 class="card-subtitle mb-2 text-muted"><?php echo $row['author']; ?></h6>
-                                    <p class="card-text"><?php echo $row['publisher']; ?></p>
-                                    <button href="books.php?id='.$row['id'].'" class="btn btn-primary">Reserve Now!</button>
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center">
+                <?php
+
+                // Initialize the session
+                session_start();
+
+                require ('cms/core/Assets/Config.php');
+
+
+                $conn = mysqli_connect("localhost", "root", "", "boekenarchief"); //Connect to database
+
+                $id = $_GET['id'];
+                $query = "SELECT * FROM books WHERE id=$id";
+                $result = mysqli_query($conn, $query) or die('Cannot fetch data from database. '.mysqli_error($conn));
+                if(mysqli_num_rows($result) > 0) {
+                    while($row = mysqli_fetch_assoc($result)) {?>
+                        <div class="col-md-9">
+                            <div class="small mb-1">BOOK ID: <?php echo $row['id'] ?></div>
+                            <h1 class="display-5 fw-bolder">S<?php echo $row['title'] ?></h1>
+                            <div class="fs-5 mb-5">
+                                <span class="text-decoration-line-through">
+                                    <?php
+                                    if($row['borrow'] == 1){
+                                        ?>
+                                        <p class="text-success">Available</p>
+                                        <?php
+                                    } else if($row['borrow'] == 0) {
+                                        ?>
+                                        <p class="text-danger">Not Available</p>
+
+                                        <?php
+                                    }
+                                    ?>
+                                </span>
+                           </div>
+                            <p class="lead"><?php echo $row['author'] ?></p>
+                            <?php
+                            if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+                                if($row['borrow'] == 1) {
+                                        ?>
+                                            <div class="d-flex">
+                                                <form action="books.php" method="POST">
+                                                    <input type="hidden" name="userid" name="$userid" value="<?php echo $_SESSION['id']?>">
+                                                    <input type="hidden" name="bookid" name="bookid" value="<?php echo $_GET['id']?>">
+                                                    <input  class="btn bg-success text-white flex-shrink-0" type="submit" name="event_uploader" value="Claim">
+                                                </form>
+                                            </div>
+                                        <?php
+                                    }
+                                    ?>
+                                <?php
+                            } else {
+                                ?>
+                                <div class="d-flex">
+                                    <a class="btn bg-danger text-white flex-shrink-0" href="cms/register.php" type="button">
+                                        <i class="bi-cart-fill me-1"></i>
+                                        First Sign In
+                                    </a>
                                 </div>
-                            </div>
+                                <?php
+                            }
+                            ?>
+
                         </div>
-
-                    <?php
-                        }
-                        mysqli_free_result($result);
-                            mysqli_close($conn);
-                    ?>
+                        <?php
+                    }
+                }
+                mysqli_free_result($result);
+                mysqli_close($conn);
+                ?>
             </div>
-
         </div>
     </section>
 

@@ -9,6 +9,13 @@ if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
     exit;
 }
 
+if($_SESSION['admin'] == 0)
+{
+    header("location: ./profile.php");
+} else {
+
+}
+
 ?>
 
 <!DOCTYPE html>
